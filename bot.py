@@ -13,6 +13,8 @@ from telegram.ext import (
 
 from dotenv import load_dotenv
 
+from edupage_utils import get_next_lesson
+
 
 load_dotenv()
 
@@ -21,6 +23,8 @@ logging.basicConfig(
     level=logging.INFO,
 )
 logger = logging.getLogger(__name__)
+
+PARSE_MODE = 'MarkdownV2'
 
 
 def main_menu_markup() -> InlineKeyboardMarkup:
@@ -59,15 +63,15 @@ async def send_message_safe(
       4. otherwise log and do nothing
     """
     if update.callback_query is not None:
-        await update.callback_query.edit_message_text(text=text, reply_markup=reply_markup)
+        await update.callback_query.edit_message_text(text=text, reply_markup=reply_markup, parse_mode=PARSE_MODE)
         return
 
     if update.message is not None:
-        await update.message.reply_text(text=text, reply_markup=reply_markup)
+        await update.message.reply_text(text=text, reply_markup=reply_markup, parse_mode=PARSE_MODE)
         return
 
     if update.effective_chat is not None:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text=text, reply_markup=reply_markup)
+        await context.bot.send_message(chat_id=update.effective_chat.id, text=text, reply_markup=reply_markup, parse_mode=PARSE_MODE)
         return
 
     logger.warning("send_message_safe: no callback_query, no message, no effective_chat in update: %s", update)
@@ -75,7 +79,7 @@ async def send_message_safe(
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     text = (
-        "Welcome to the Edupage bot.\n\n"
+        "Welcome to the Edupage bot\\.\n\n"
         "Choose an action from the menu below:"
     )
     await send_message_safe(update, context, text=text, reply_markup=main_menu_markup())
@@ -86,27 +90,27 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 
 async def cmd_nextlesson(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await send_message_safe(update, context, text="Fetching next lesson...", reply_markup=main_menu_markup())
+    await send_message_safe(update, context, text="Fetching next lesson\\.\\.\\.", reply_markup=main_menu_markup())
     await send_next_lesson_msg(update, context)
 
 
 async def cmd_schedule(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await send_message_safe(update, context, text="Fetching weekly schedule...", reply_markup=main_menu_markup())
+    await send_message_safe(update, context, text="Fetching weekly schedule\\.\\.\\.", reply_markup=main_menu_markup())
     await send_weekly_schedule_msg(update, context)
 
 
 async def cmd_lastlessons(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await send_message_safe(update, context, text="Fetching last lessons per day...", reply_markup=main_menu_markup())
+    await send_message_safe(update, context, text="Fetching last lessons per day\\.\\.\\.", reply_markup=main_menu_markup())
     await send_last_lessons_msg(update, context)
 
 
 async def cmd_exams(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await send_message_safe(update, context, text="Fetching upcoming exams...", reply_markup=main_menu_markup())
+    await send_message_safe(update, context, text="Fetching upcoming exams\\.\\.\\.", reply_markup=main_menu_markup())
     await send_upcoming_exams_msg(update, context)
 
 
 async def send_next_lesson_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await send_message_safe(update, context, "TODO", reply_markup=back_markup())
+    await send_message_safe(update, context, f"```\n{get_next_lesson()}\n```", reply_markup=back_markup())
 
 
 async def send_weekly_schedule_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
