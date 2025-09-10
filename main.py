@@ -1,17 +1,17 @@
 import os
 
-from edupage_api import *
-from edupage_api.exceptions import *
+from edupage_api import Edupage
+from edupage_api.exceptions import BadCredentialsException, CaptchaException
 
 from datetime import datetime
-
 from dotenv import load_dotenv
+
 
 load_dotenv()
 
-EDUPAGE_USERNAME = os.getenv("EDUPAGE_USERNAME")
-EDUPAGE_PASSWORD = os.getenv("EDUPAGE_PASSWORD")
-EDUPAGE_SCHOOL_SUBDOMAIN = os.getenv("EDUPAGE_SCHOOL_SUBDOMAIN")
+EDUPAGE_USERNAME = os.getenv("EDUPAGE_USERNAME", "")
+EDUPAGE_PASSWORD = os.getenv("EDUPAGE_PASSWORD", "")
+EDUPAGE_SCHOOL_SUBDOMAIN = os.getenv("EDUPAGE_SCHOOL_SUBDOMAIN", "")
 
 edupage = Edupage()
 
